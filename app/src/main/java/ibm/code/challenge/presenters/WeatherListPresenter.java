@@ -17,19 +17,19 @@ public final class WeatherListPresenter {
 
     public WeatherListPresenter(OnResponseListener onResponseListener) {
         this.onResponseListener = onResponseListener;
-        service =  RetrofitInstance.getRetrofitInstance().create(RetroService.class);
+        service = RetrofitInstance.getRetrofitInstance().create(RetroService.class);
     }
 
     public void fetchWeatherList(String coordinates) {
 
 
-        Call<List<WeatherInfo>> call =   service.getWeatherInfoList(coordinates);
+        Call<List<WeatherInfo>> call = service.getWeatherInfoList(coordinates);
 
         call.enqueue(new Callback<List<WeatherInfo>>() {
             @Override
             public void onResponse(Call<List<WeatherInfo>> call, Response<List<WeatherInfo>> response) {
-                if(response.isSuccessful() && response.body() !=null)
-                propagateResponse(response);
+                if (response.isSuccessful() && response.body() != null)
+                    propagateResponse(response);
             }
 
             @Override
@@ -47,21 +47,19 @@ public final class WeatherListPresenter {
     }
 
 
-
     public void fetchLocation(final String query) {
 
 
-        Call<List<WeatherInfo>>call =   service.getLocation(query);
+        Call<List<WeatherInfo>> call = service.getLocation(query);
 
         call.enqueue(new Callback<List<WeatherInfo>>() {
             @Override
             public void onResponse(Call<List<WeatherInfo>> call, Response<List<WeatherInfo>> response) {
 
-                if(response.isSuccessful() && response.body()!=null && response.body().size()>0) {
+                if (response.isSuccessful() && response.body() != null && response.body().size() > 0) {
                     onResponseListener.saveToPreferences(query);
                     propagateResponse(response);
-                }
-                else onResponseListener.OnWeatherListNotFound();
+                } else onResponseListener.OnWeatherListNotFound();
 
             }
 
@@ -72,15 +70,16 @@ public final class WeatherListPresenter {
         });
 
 
-
     }
-
 
 
     public interface OnResponseListener {
         void OnWeatherListReceived(List WeatherInfo);
+
         void OnWeatherListNotFound();
+
         void OnError();
+
         void saveToPreferences(String query);
 
 

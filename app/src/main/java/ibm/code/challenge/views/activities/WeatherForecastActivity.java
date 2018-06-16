@@ -23,6 +23,7 @@ public class WeatherForecastActivity extends AppCompatActivity implements Weathe
     private WeatherForecastPresenter presenter;
 
 
+    //setting up components and performing necessary requestss
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class WeatherForecastActivity extends AppCompatActivity implements Weathe
     }
 
 
+    //recycler view initiation is handled once server response is ready
     @Override
     public void OnWeatherForecastReceived(WeatherForecast weatherForecast) {
 
@@ -56,6 +58,8 @@ public class WeatherForecastActivity extends AppCompatActivity implements Weathe
 
     }
 
+    //scenario where there is no network connection or issues in the response is handled. Given more time, would have created a separate component for showing
+    //these errors instead of showing a toast and would have added more categories of error messages
     @Override
     public void OnError() {
         Toast.makeText(getApplicationContext(), Constants.SOMETHING_WENT_WRONG_PLEASE_CHECK_YOUR_NETWORK_CONNECTION_ONCE, Toast.LENGTH_LONG).show();
@@ -63,7 +67,7 @@ public class WeatherForecastActivity extends AppCompatActivity implements Weathe
     }
 
 
-
+    //request is executed only after checking network connectivity
     private void executeRequest(Integer id) {
 
         if (CommonUtils.isNetworkAvailable(getApplicationContext())) {

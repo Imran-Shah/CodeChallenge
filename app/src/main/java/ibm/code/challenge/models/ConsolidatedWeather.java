@@ -7,8 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class ConsolidatedWeather implements Parcelable
-{
+public class ConsolidatedWeather implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -66,8 +65,7 @@ public class ConsolidatedWeather implements Parcelable
             return (new ConsolidatedWeather[size]);
         }
 
-    }
-    ;
+    };
 
     protected ConsolidatedWeather(Parcel in) {
         this.id = ((Long) in.readValue((Integer.class.getClassLoader())));
@@ -229,7 +227,7 @@ public class ConsolidatedWeather implements Parcelable
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

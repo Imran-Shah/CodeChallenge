@@ -44,6 +44,7 @@ public class WeatherForecastPresenter {
 
     public interface OnForecastResponseListener {
         void OnWeatherForecastReceived(WeatherForecast weatherForecast);
+
         void OnError();
 
 

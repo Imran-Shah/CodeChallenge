@@ -25,7 +25,8 @@ public class WeatherInfo implements Parcelable {
     private String coordinates;
 
 
-    public WeatherInfo() {}
+    public WeatherInfo() {
+    }
 
     protected WeatherInfo(Parcel in) {
         this.distance = ((Integer) in.readValue((Integer.class.getClassLoader())));

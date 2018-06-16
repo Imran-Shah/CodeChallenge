@@ -7,8 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Parent implements Parcelable
-{
+public class Parent implements Parcelable {
 
     @SerializedName("title")
     @Expose
@@ -32,8 +31,7 @@ public class Parent implements Parcelable
             return (new Parent[size]);
         }
 
-    }
-    ;
+    };
 
     protected Parent(Parcel in) {
         this.title = ((String) in.readValue((String.class.getClassLoader())));
@@ -85,7 +83,7 @@ public class Parent implements Parcelable
     }
 
     public int describeContents() {
-        return  0;
+        return 0;
     }
 
 }

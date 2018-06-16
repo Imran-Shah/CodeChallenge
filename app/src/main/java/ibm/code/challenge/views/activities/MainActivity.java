@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
     private AppCompatEditText editText;
     private SharedPreferences preferences;
 
-
+    //setting up components and performing necessary requests
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,12 +65,8 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
-
+    //Callback when the list items are returned from the server. Recycler view initialization is handled here
     @Override
     public void OnWeatherListReceived(List weatherInfo) {
         progressBar.setVisibility(View.GONE);
@@ -88,25 +84,22 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
 
     }
 
+    //user's search queries are saved in preferences. Given more time, would have handled duplicate values in the suggestions
+    //and also would have created a separate utility for shared preferences
     @Override
     public void saveToPreferences(String query) {
-        if(preferences!=null) {
+        if (preferences != null) {
 
 
             List<String> list;
 
             String storedValue = preferences.getString(Constants.SEARCH_TEXTS, Constants.DEFAULT);
-
             Gson gson = new Gson();
-
-            if(Constants.DEFAULT.equalsIgnoreCase(storedValue)){
+            if (Constants.DEFAULT.equalsIgnoreCase(storedValue)) {
                 list = new ArrayList<>();
-            }else list = gson.fromJson(storedValue, ArrayList.class);
-
-            if(list!=null)list.add(query);
-
+            } else list = gson.fromJson(storedValue, ArrayList.class);
+            if (list != null) list.add(query);
             String searchTexts = gson.toJson(list);
-
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(Constants.SEARCH_TEXTS, searchTexts); // Storing string
             editor.apply();
@@ -115,12 +108,15 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
 
     }
 
-
+    //scenario where no results were returned from the server call is handled. Given more time, would have created a separate component for showing
+    //these errors instead of showing a toast
     @Override
     public void OnWeatherListNotFound() {
         Toast.makeText(getApplicationContext(), Constants.NO_RESULTS_FOUND_PLEASE_TRY_A_DIFFERENT_QUERY, Toast.LENGTH_LONG).show();
     }
 
+    //scenario where there is no network connection or issues in the response is handled. Given more time, would have created a separate component for showing
+    //these errors instead of showing a toast and would have added more categories of error messages
     @Override
     public void OnError() {
         Toast.makeText(getApplicationContext(), Constants.SOMETHING_WENT_WRONG_PLEASE_CHECK_YOUR_NETWORK_CONNECTION_ONCE, Toast.LENGTH_LONG).show();
@@ -128,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
     }
 
 
+    //list item click handled here which opens up a new activity
     @Override
     public void onListItemClicked(Integer id) {
 
@@ -137,14 +134,25 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
 
     }
 
+    //search is performed when one of the search suggestions is clicked
     @Override
     public void onSuggestionClick(String text) {
         executeSearch(text);
     }
 
+
+    //permission handling. Given more time, would have handled showing rationale to the user if he denied the permission
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+
+    //components are set up. Given more time, would have used dagger for dependency injection
     private void setUpComponents() {
         rv_weather = (RecyclerView) findViewById(R.id.rv_weather);
-        rv_suggestions = (RecyclerView)findViewById(R.id.rv_search_suggestions);
+        rv_suggestions = (RecyclerView) findViewById(R.id.rv_search_suggestions);
         progressBar = findViewById(R.id.progressBar);
         editText = findViewById(R.id.et_search);
         weatherListPresenter = new WeatherListPresenter(this);
@@ -153,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
     }
 
 
-
+    //request is executed only after checking network connectivity
     private void executeRequest(String coordinates) {
 
         if (CommonUtils.isNetworkAvailable(getApplicationContext())) {
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
 
     }
 
+    //location is fetched from the device if the user has already provided permission, else permission is requested from the user again unless he declines seeing those pop-ups never again
     private Location getLocation() {
         Location location;
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -176,11 +185,12 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
         provider = locationManager.getBestProvider(criteria, false);
 
 
+        //permission check
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     REQUEST_CODE);
 
-        if(provider == null) return null;
+        if (provider == null) return null;
 
         location = locationManager.getLastKnownLocation(provider);
         return location;
@@ -202,6 +212,11 @@ public class MainActivity extends AppCompatActivity implements WeatherListPresen
         });
 
 
+        loadSuggestionsFromPreferences();
+    }
+
+    //suggestions loaded from preferences
+    private void loadSuggestionsFromPreferences() {
         String storedValue = preferences.getString(Constants.SEARCH_TEXTS, Constants.DEFAULT);
 
         Gson gson = new Gson();
